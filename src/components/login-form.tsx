@@ -45,7 +45,7 @@ export function LoginForm({
     if (sessionData) {
       router.replace("/listing");
     }
-  }, []);
+  }, [router]);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

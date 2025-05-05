@@ -19,7 +19,7 @@ const PropertyImage = ({ property }: PropertyImageProp) => {
     };
 
     getImage();
-  }, []);
+  }, [property.image]);
 
   return (
     <div className="absolute top-[-4px] left-1/2 -translate-y-full -translate-x-1/2 hidden group-hover:block">

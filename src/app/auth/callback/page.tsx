@@ -14,7 +14,7 @@ const AuthCallback = () => {
         console.log("No session found");
       }
     });
-  }, []);
+  }, [router]);
 
   return <div>Signing you in...</div>;
 };

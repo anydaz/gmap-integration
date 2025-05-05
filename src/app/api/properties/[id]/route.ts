@@ -4,10 +4,10 @@ import { errorHandler } from "@/app/utils/errorHandler";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     const { price, image, latitude, longtitude } = await req.json();
 
     const propertyParam = validateProperty({
@@ -32,10 +32,10 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     const deleted = await deleteProperty({
       id: parseInt(id),
     });
