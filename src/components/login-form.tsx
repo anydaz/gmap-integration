@@ -13,14 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRef } from "react";
 
-import { createClient } from "@supabase/supabase-js";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-
-const supabase = createClient(
-  "https://zzzvljdbovpnyrocqhoh.supabase.co",
-  "<your-anon-key>"
-);
+// import { supabase } from "@/utils/supabase";
 
 export function LoginForm({
   className,
@@ -29,14 +22,14 @@ export function LoginForm({
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   async function signInWithEmail({ email }: { email: string }) {
-    const { data, error } = await supabase.auth.signInWithOtp({
-      email: email,
-      options: {
-        // set this to false if you do not want the user to be automatically signed up
-        shouldCreateUser: false,
-        emailRedirectTo: "https://example.com/welcome",
-      },
-    });
+    // const { data, error } = await supabase.auth.signInWithOtp({
+    //   email: email,
+    //   options: {
+    //     // set this to false if you do not want the user to be automatically signed up
+    //     shouldCreateUser: false,
+    //     emailRedirectTo: "https://example.com/welcome",
+    //   },
+    // });
   }
 
   const handleOnSubmit = () => {

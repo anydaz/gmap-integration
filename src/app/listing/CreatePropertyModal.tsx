@@ -3,13 +3,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 import Image from "next/image";
-import { IMarkerPosition } from "@/interface/shared";
+import { IMarkerPosition, IUploadResponse } from "@/interface/shared";
+import { fetchApi } from "@/app/utils/fetch";
+import { Property } from "@prisma/client";
+import { toast } from "sonner";
 
 interface ICreatePropertyModalProp {
   showModal: boolean;
   setShowModal: (value: boolean) => void;
   markerPosition: IMarkerPosition;
 }
+
 const CreatePropertyModal = ({
   showModal,
   setShowModal,
@@ -23,10 +27,34 @@ const CreatePropertyModal = ({
     setImage(file);
   };
 
-  const handleSubmit = () => {
-    // TO DO
-    // UPLOAD IMAGE
-    // SAVE
+  const handleSubmit = async () => {
+    if (!image) return;
+
+    const formData = new FormData();
+    formData.append("file", image);
+
+    const { data: uploadData } = await fetchApi<IUploadResponse>("api/upload", {
+      body: formData,
+      method: "POST",
+    });
+
+    const { data } = await fetchApi<Property>("api/properties", {
+      body: JSON.stringify({
+        price: Number(price),
+        image: uploadData.path,
+        latitude: markerPosition.lat,
+        longtitude: markerPosition.lng,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (data) {
+      toast("Property has been created.");
+      setShowModal(false);
+    }
   };
 
   return (
