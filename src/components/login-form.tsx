@@ -1,19 +1,49 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRef } from "react";
+
+import { createClient } from "@supabase/supabase-js";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+
+const supabase = createClient(
+  "https://zzzvljdbovpnyrocqhoh.supabase.co",
+  "<your-anon-key>"
+);
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  async function signInWithEmail({ email }: { email: string }) {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        // set this to false if you do not want the user to be automatically signed up
+        shouldCreateUser: false,
+        emailRedirectTo: "https://example.com/welcome",
+      },
+    });
+  }
+
+  const handleOnSubmit = () => {
+    if (!emailInputRef.current) return;
+    const email = emailInputRef.current.value;
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -24,7 +54,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleOnSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
@@ -59,6 +89,7 @@ export function LoginForm({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    ref={emailInputRef}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -92,5 +123,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }
