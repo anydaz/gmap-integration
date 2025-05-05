@@ -7,6 +7,8 @@ import Gmap from "./Gmap";
 import { Property } from "@prisma/client";
 import { fetchApi } from "../utils/fetch";
 import UpdatePropertyModal from "./UpdatePropertyModal";
+import { useQuery } from "@tanstack/react-query";
+import { listingQueryKey } from "../const/queryKeys";
 
 export interface ModalEditState {
   show: boolean;
@@ -22,7 +24,7 @@ const Listing = () => {
   const [markerPosition, setMarkerPosition] = useState<IMarkerPosition | null>(
     null
   );
-  const [listing, setListing] = useState<Property[]>([]);
+  // const [listing, setListing] = useState<Property[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [modalEditData, setModalEditData] = useState<ModalEditState>({
     show: false,
@@ -30,13 +32,13 @@ const Listing = () => {
   });
 
   const getListing = async () => {
-    const { data } = await fetchApi<Property[]>("api/properties");
-    setListing(data);
+    return await fetchApi<Property[]>("api/properties");
   };
 
-  useEffect(() => {
-    getListing();
-  }, []);
+  const { data } = useQuery({
+    queryKey: listingQueryKey,
+    queryFn: getListing,
+  });
 
   return isLoaded ? (
     <>
@@ -44,7 +46,7 @@ const Listing = () => {
         markerPosition={markerPosition}
         setMarkerPosition={setMarkerPosition}
         onCreate={() => setShowModal(true)}
-        listing={listing}
+        listing={data?.data || []}
         onEdit={(data: Property) => setModalEditData({ data, show: true })}
       />
       {markerPosition && (

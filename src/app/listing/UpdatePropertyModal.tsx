@@ -8,6 +8,8 @@ import { fetchApi } from "@/app/utils/fetch";
 import { Property } from "@prisma/client";
 import { toast } from "sonner";
 import { getImageUrl } from "../utils/supabase";
+import { useQueryClient } from "@tanstack/react-query";
+import { listingQueryKey } from "../const/queryKeys";
 
 interface ICreatePropertyModalProp {
   showModal: boolean;
@@ -23,6 +25,8 @@ const UpdatePropertyModal = ({
   const [price, setPrice] = useState("0");
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [image, setImage] = useState<File | null>(null);
+
+  const queryClient = useQueryClient();
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -68,6 +72,7 @@ const UpdatePropertyModal = ({
     if (data) {
       toast("Property has been updated.");
       setShowModal(false);
+      queryClient.invalidateQueries({ queryKey: listingQueryKey });
     }
   };
 

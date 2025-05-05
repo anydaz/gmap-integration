@@ -6,6 +6,8 @@ import PropertyImage from "./PropertyImage";
 import { Edit, Trash } from "lucide-react";
 import { fetchApi } from "../utils/fetch";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { listingQueryKey } from "../const/queryKeys";
 
 interface PropertyItemProp {
   item: Property;
@@ -13,6 +15,8 @@ interface PropertyItemProp {
 }
 
 const PropertyItem = ({ item, onEdit }: PropertyItemProp) => {
+  const queryClient = useQueryClient();
+
   const deleteItem = async () => {
     const { data } = await fetchApi<Property>(`api/properties/${item.id}`, {
       method: "DELETE",
@@ -20,6 +24,7 @@ const PropertyItem = ({ item, onEdit }: PropertyItemProp) => {
 
     if (data) {
       toast("Property has been deleted.");
+      queryClient.invalidateQueries({ queryKey: listingQueryKey });
     }
   };
 

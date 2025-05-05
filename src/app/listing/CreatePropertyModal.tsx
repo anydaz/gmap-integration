@@ -7,6 +7,8 @@ import { IMarkerPosition, IUploadResponse } from "@/interface/shared";
 import { fetchApi } from "@/app/utils/fetch";
 import { Property } from "@prisma/client";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { listingQueryKey } from "../const/queryKeys";
 
 interface ICreatePropertyModalProp {
   showModal: boolean;
@@ -21,6 +23,8 @@ const CreatePropertyModal = ({
 }: ICreatePropertyModalProp) => {
   const [price, setPrice] = useState("");
   const [image, setImage] = useState<File | null>(null);
+
+  const queryClient = useQueryClient();
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -54,6 +58,7 @@ const CreatePropertyModal = ({
     if (data) {
       toast("Property has been created.");
       setShowModal(false);
+      queryClient.invalidateQueries({ queryKey: listingQueryKey });
     }
   };
 
