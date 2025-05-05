@@ -12,3 +12,8 @@ export interface IUploadResponse {
   path: string;
   fullPath: string;
 }
+
+export interface IPaginationParam {
+  skip?: number;
+  take?: number;
+}

@@ -1,25 +1,11 @@
 "use client";
-import React, { useState } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  OverlayView,
-} from "@react-google-maps/api";
-
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { useJsApiLoader } from "@react-google-maps/api";
 import CreatePropertyModal from "./CreatePropertyModal";
 import { IMarkerPosition } from "@/interface/shared";
-
-const containerStyle = {
-  width: "100vw",
-  height: "90vh",
-};
-
-const center = {
-  lat: -6.2088,
-  lng: 106.8456,
-};
+import Gmap from "./Gmap";
+import { Property } from "@prisma/client";
+import { fetchApi } from "../utils/fetch";
 
 const Listing = () => {
   const { isLoaded } = useJsApiLoader({
@@ -30,60 +16,26 @@ const Listing = () => {
   const [markerPosition, setMarkerPosition] = useState<IMarkerPosition | null>(
     null
   );
+  const [listing, setListing] = useState<Property[]>([]);
   const [showModal, setShowModal] = useState(false);
 
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (event.latLng) {
-      const lat = event.latLng.lat();
-      const lng = event.latLng.lng();
-      setMarkerPosition({ lat, lng });
-    }
+  const getListing = async () => {
+    const { data } = await fetchApi<Property[]>("api/properties");
+    setListing(data);
   };
 
-  const [map, setMap] = React.useState(null);
-
-  const onLoad = React.useCallback(function callback(map) {
-    setMap(map);
-  }, []);
-
-  const onUnmount = React.useCallback(function callback(map) {
-    setMap(null);
+  useEffect(() => {
+    getListing();
   }, []);
 
   return isLoaded ? (
     <>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={16}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        onClick={handleMapClick}
-      >
-        {markerPosition && (
-          <>
-            <Marker position={markerPosition} />
-            <OverlayView
-              position={markerPosition}
-              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            >
-              <div className="cursor-pointer w-max h-max transform translate-y-[4px] -translate-x-[50%] bg-black px-[4px] py-[8px] rounded">
-                <Button
-                  size="xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowModal(true);
-                  }}
-                >
-                  Create Property
-                </Button>
-              </div>
-            </OverlayView>
-          </>
-        )}
-
-        {/* Child components, such as markers, info windows, etc. */}
-      </GoogleMap>
+      <Gmap
+        markerPosition={markerPosition}
+        setMarkerPosition={setMarkerPosition}
+        onCreate={() => setShowModal(true)}
+        listing={listing}
+      />
       {markerPosition && (
         <CreatePropertyModal
           showModal={showModal}

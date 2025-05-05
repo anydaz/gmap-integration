@@ -13,3 +13,11 @@ export const uploadToStorage = async (file: File) => {
       upsert: false,
     });
 };
+
+export const getImageUrl = async (path: string) => {
+  const { data } = await supabase.storage
+    .from("property-image")
+    .createSignedUrl(path, 60);
+
+  return data?.signedUrl;
+};
