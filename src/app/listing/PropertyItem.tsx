@@ -7,9 +7,10 @@ import { Edit, Trash } from "lucide-react";
 
 interface PropertyItemProp {
   item: Property;
+  onEdit: (data: Property) => void;
 }
 
-const PropertyItem = ({ item }: PropertyItemProp) => {
+const PropertyItem = ({ item, onEdit }: PropertyItemProp) => {
   return (
     <OverlayView
       key={item.id}
@@ -27,7 +28,7 @@ const PropertyItem = ({ item }: PropertyItemProp) => {
         <div className="flex items-center">
           <Button size="xs">$ {String(item.price)}</Button>
           <div className="gap-2 hidden group-hover:flex">
-            <Edit color="white" />
+            <Edit color="white" onClick={() => onEdit(item)} />
             <Trash color="white" />
           </div>
         </div>

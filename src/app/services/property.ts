@@ -27,3 +27,18 @@ export const createProperty = async ({
     data: { price, image, latitude, longtitude },
   });
 };
+
+export const updateProperty = async ({
+  id,
+  price,
+  image,
+  latitude,
+  longtitude,
+}: IPropertyParam & { id: number }) => {
+  return await prisma.property.update({
+    where: {
+      id: id,
+    },
+    data: { price, image, latitude, longtitude },
+  });
+};

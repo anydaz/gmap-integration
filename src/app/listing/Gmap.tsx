@@ -21,6 +21,7 @@ interface IGmapProps {
   markerPosition: IMarkerPosition | null;
   setMarkerPosition: (value: IMarkerPosition | null) => void;
   onCreate: () => void;
+  onEdit: (data: Property) => void;
 }
 
 const Gmap = ({
@@ -28,6 +29,7 @@ const Gmap = ({
   markerPosition,
   setMarkerPosition,
   onCreate,
+  onEdit,
 }: IGmapProps) => {
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
@@ -45,7 +47,7 @@ const Gmap = ({
       onClick={handleMapClick}
     >
       {listing.map((item) => {
-        return <PropertyItem key={item.id} item={item} />;
+        return <PropertyItem key={item.id} item={item} onEdit={onEdit} />;
       })}
       {markerPosition && (
         <>
