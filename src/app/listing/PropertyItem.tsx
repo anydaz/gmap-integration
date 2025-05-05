@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Property } from "@prisma/client";
 import PropertyImage from "./PropertyImage";
 import { Edit, Trash } from "lucide-react";
+import { fetchApi } from "../utils/fetch";
+import { toast } from "sonner";
 
 interface PropertyItemProp {
   item: Property;
@@ -11,6 +13,16 @@ interface PropertyItemProp {
 }
 
 const PropertyItem = ({ item, onEdit }: PropertyItemProp) => {
+  const deleteItem = async () => {
+    const { data } = await fetchApi<Property>(`api/properties/${item.id}`, {
+      method: "DELETE",
+    });
+
+    if (data) {
+      toast("Property has been deleted.");
+    }
+  };
+
   return (
     <OverlayView
       key={item.id}
@@ -29,7 +41,7 @@ const PropertyItem = ({ item, onEdit }: PropertyItemProp) => {
           <Button size="xs">$ {String(item.price)}</Button>
           <div className="gap-2 hidden group-hover:flex">
             <Edit color="white" onClick={() => onEdit(item)} />
-            <Trash color="white" />
+            <Trash color="white" onClick={() => deleteItem()} />
           </div>
         </div>
       </div>

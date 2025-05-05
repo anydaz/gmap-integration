@@ -1,5 +1,5 @@
 import { validateProperty } from "@/app/input/property";
-import { updateProperty } from "@/app/services/property";
+import { deleteProperty, updateProperty } from "@/app/services/property";
 import { errorHandler } from "@/app/utils/errorHandler";
 
 export async function PUT(
@@ -25,6 +25,21 @@ export async function PUT(
     return Response.json({
       data: updated,
     });
+  } catch (error) {
+    return errorHandler(error);
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+    const deleted = await deleteProperty({
+      id: parseInt(id),
+    });
+    return Response.json({ data: deleted });
   } catch (error) {
     return errorHandler(error);
   }
