@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchApi } from "@/app/utils/fetch";
 import { useRouter } from "next/navigation";
+import Modal from "./shared/Modal";
+import { DialogDescription } from "./ui/dialog";
 
 // import { supabase } from "@/utils/supabase";
 
@@ -21,17 +23,22 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [showModal, setShowModal] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
 
   async function signInWithEmail({ email }: { email: string }) {
-    fetchApi("api/login", {
+    const { data } = await fetchApi("api/login", {
       method: "POST",
       body: JSON.stringify({
         email: email,
       }),
     });
+
+    if (data) {
+      setShowModal(true);
+    }
   }
 
   const handleOnSubmit = () => {
@@ -123,6 +130,9 @@ export function LoginForm({
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </div>
+      <Modal showModal={showModal} setShowModal={setShowModal} title="Alert">
+        <DialogDescription>Please Check Your Email!</DialogDescription>
+      </Modal>
     </div>
   );
 }

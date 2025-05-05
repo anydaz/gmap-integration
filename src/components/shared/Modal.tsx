@@ -14,7 +14,7 @@ interface IModalProps {
   setShowModal: (value: boolean) => void;
   title: string;
   children: React.ReactNode | React.ReactNode[];
-  onSubmit: () => void;
+  onSubmit?: () => void;
 }
 
 const Modal = ({
@@ -35,7 +35,7 @@ const Modal = ({
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button onClick={onSubmit}>Submit</Button>
+          {onSubmit && <Button onClick={onSubmit}>Submit</Button>}
         </DialogFooter>
       </DialogContent>
     </Dialog>
